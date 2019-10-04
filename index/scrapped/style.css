@@ -1,0 +1,198 @@
+html{
+    background-color: black; 
+    background-image: url("bg.gif");
+    height: 100%;
+}
+body{
+    transition: .5s;
+    /* background-image: url("bg.png"); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;  
+    min-height: 100%;
+    margin: 0; 
+    display: flex;
+    flex-direction: column;
+}
+#colorflash {
+    /* background-color: rgba(140, 200, 255, 0.3);   */
+    /* background-color: rgba(245, 100, 100, 0.3);   */
+    transition: .5s;
+    flex: 1;
+    display: flex; 
+    flex-direction: column;
+    justify-content: space-between;
+}
+#scorebar {
+    background-image: linear-gradient(to bottom, rgba(10, 25, 25, 0.7), rgba(0, 0, 0, 0.7));
+    border: .5em solid rgba(50, 90, 90, 0.7);
+    outline: 2px solid rgba(100, 125, 125, 0.7); 
+    margin: 2em 8em 6em 8em;
+    min-width: 500px;
+    box-sizing: border-box;
+    flex-basis: 8em;
+    display: flex;
+    justify-content: space-evenly;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+    #health,#enemyhealth,#enemycount {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+#alienscontainer {
+    min-width: 500px;
+    margin: 0 4em 6em 4em; 
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;
+    flex-basis: 20em;
+}
+#aliens {
+    box-sizing: border-box;
+    flex-basis: 20em;
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-evenly;
+    align-content: center; 
+    flex-wrap: wrap;
+}
+    .alienshow {
+        opacity: .7; 
+        background-image: url("alien.png");
+        transition: 1s;
+        background-image: ;
+        background-size: contain;
+        background-repeat: no-repeat;
+        flex-basis: 7em;
+        height: 150px; 
+    }
+    .alienhide {
+        opacity: 0;
+        background-image: url("alien.png");
+        transition: 1s;
+        background-image: ;
+        background-size: contain;
+        background-repeat: no-repeat;
+        flex-basis: 7em;
+        height: 150px; 
+    }
+    .boss {
+        transition: .5s;
+        opacity: .7;
+        /* background-image: url("boss.png"); */
+        background-size: contain;
+        background-repeat: no-repeat;
+        flex-basis: 7em;
+        height: 150px; 
+    }
+    /* .boss:hover, .alien:hover {
+        transition: 1s;
+        flex-basis: 12em;
+        height: 200px; 
+    } */
+#prompt {
+    background-image: linear-gradient(to bottom, rgba(10, 25, 25, 0.7), rgba(0, 0, 0, 0.7));
+    border: .5em solid rgba(50, 90, 90, 0.7);
+    outline: 2px solid rgba(100, 125, 125, 0.7); 
+    margin: 0 8em 4em 8em;
+    min-width: 500px;
+    box-sizing: border-box;
+    flex-basis: 16em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+    #userchoice {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+        #left, #right {
+            /* opacity: 0; 
+            pointer-events: none;  */
+            padding-left: 1em;
+            padding-right: 1em; 
+            outline: 1px solid rgba(100, 125, 125, 0.7); 
+        }
+p {
+    color: rgba(10, 25, 25, .9); 
+    text-shadow:
+		-1px -1px 0 rgba(95, 255, 0, 0.6),
+		1px -1px 0 rgba(95, 255, 0, 0.6),
+		-1px 1px 0 rgba(95, 255, 0, 0.6),
+        1px 1px 0 rgba(95, 255, 0, 0.6);
+    margin: 0 auto;
+    padding: 0 0 .25em 0; 
+    font-family: 'Saira Stencil One', cursive;
+    font-size: 2em; 
+    text-transform:uppercase;
+}
+    .blue {
+        color: rgba(15, 10, 25, 0.9); 
+        text-shadow:
+		-1px -1px 0 rgba(0, 215, 255, 0.8),
+		1px -1px 0 rgba(0, 215, 255, 0.8),
+		-1px 1px 0 rgba(0, 215, 255, 0.8),
+        1px 1px 0 rgba(0, 215, 255, 0.8);
+    }
+    .blue:hover {
+        transition: .3s;
+            color: rgba(0, 30, 130, 0.9);
+            background-color: rgba(0, 30, 130, 0.2);
+            box-shadow:
+                -1px -1px 4px rgba(0, 215, 255, 0.8),
+                1px -1px 4px rgba(0, 215, 255, 0.8),
+                -1px 1px 4px rgba(0, 215, 255, 0.8),
+                1px 1px 4px rgba(0, 215, 255, 0.8);
+            text-shadow:
+                -1px -1px 4px rgba(0, 215, 255, 0.8),
+                1px -1px 4px rgba(0, 215, 255, 0.8),
+                -1px 1px 4px rgba(0, 215, 255, 0.8),
+                1px 1px 4px rgba(0, 215, 255, 0.8);
+    }
+    .purple {
+        color: rgba(25, 10, 25, 0.9); 
+        text-shadow:
+		-1px -1px 0 rgba(255, 0, 170, 0.8),
+		1px -1px 0 rgba(255, 0, 170, 0.8),
+		-1px 1px 0 rgba(255, 0, 170, 0.8),
+        1px 1px 0 rgba(255, 0, 170, 0.8);
+    }
+    .purple:hover {
+        transition: .3s;
+            color: rgba(115, 0, 130, 0.9);
+            background-color: rgba(115, 0, 130, 0.2);
+            box-shadow:
+                -1px -1px 4px rgba(255, 0, 170, 0.8),
+                1px -1px 4px rgba(255, 0, 170, 0.8),
+                -1px 1px 4px rgba(255, 0, 170, 0.8),
+                1px 1px 4px rgba(255, 0, 170, 0.8);
+            text-shadow:
+                -1px -1px 4px rgba(255, 0, 170, 0.8),
+                1px -1px 4px rgba(255, 0, 170, 0.8),
+                -1px 1px 4px rgba(255, 0, 170, 0.8),
+                1px 1px 4px rgba(255, 0, 170, 0.8);
+    }
+
+@media (max-width: 750px) {
+    p {
+        font-size: 1.5em;
+    }
+}
+@media (max-width: 900px) {
+    #prompt, #scorebar, #alienscontainer {
+        margin-right: 2em;
+        margin-left: 2em;
+    }
+}
+@media (min-width: 1400px) {
+    p {
+        font-size: 2.5em;
+    }
+    #prompt, #scorebar {
+        margin-right: 16em;
+        margin-left: 16em;
+    }
+}
