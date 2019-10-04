@@ -64,7 +64,7 @@ class Boss extends Alien {
             (attacker) => `You breach its hull for ${attacker.firepower} damage, leaving ${this.currentHull} health.`,
             `You breach its hull and destroy it!`,
             (attacker) => `You erode its shield for ${attacker.firepower} damage, leaving ${this.currentShield} shield health.`,
-            `You damage its shield and destroy it!`     
+            `You damage its shield down to 0 health!`     
         ] 
     }
     updateStartingShield () {
