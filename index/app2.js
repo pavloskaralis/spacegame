@@ -195,4 +195,4 @@ const spawnBoss = () => {
 }
 
 /////Initialize/////
-setTimeout(startGame, 300);
+setTimeout(startGame, 1000);
