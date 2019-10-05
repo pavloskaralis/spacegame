@@ -37,7 +37,6 @@ class Alien {
     destroyed () {
         alert(this.alerts[3]); 
     }
-
 }
 
 class Boss extends Alien {
