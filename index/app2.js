@@ -165,8 +165,6 @@ class GameLogic  {
             (this.alienFleet[0].currentHull > 0 ? this.outcomes[9]() : this.outcomes[10]());
     }
     ussAttackResultShield () {
-       
-
         this.alienBoss.currentShield === this.alienBoss.startingShield ? 
             this.outcomes[8]() : 
             ((this.alienBoss.currentShield > 0) ? this.outcomes[19]() : this.outcomes[20]());
