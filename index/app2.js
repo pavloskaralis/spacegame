@@ -17,14 +17,10 @@ class Alien {
             `A second alien ship joins in on the an attack...`,
         ]
     }
-    hitOrMiss (target) {
-            (Math.random() <= this.accuracy ? target.currentHull -= this.firepower : target.currentHull -= 0);
-    }
     updateStartingHall () {
         this.startingHull = this.currentHull; 
     }
     attack (target) {
-        this.hitOrMiss(target);
         alert(this.alerts[0]);
     }
     dodgeAttack () {
@@ -78,13 +74,7 @@ class Uss extends Alien {
         ]
     }
     attack (target) {
-        this.hitOrMiss(target);
         target.loadinShield === 6 ? alert(this.alerts[5]) : alert(this.alerts[0]);
-    }
-    hitOrMiss (target) {
-        target.startingShield > 0 ? 
-            (Math.random() <= this.accuracy ? target.currentShield -= this.firepower : target.currentShield -= 0) :
-            (Math.random() <= this.accuracy ? target.currentHull -= this.firepower : target.currentHull -= 0);
     }
     destroyed () {
         alert(this.alerts[3]); 
@@ -106,7 +96,7 @@ class GameLogic  {
         this.messages = [
             () => `Please select a difficulty level.`, //0
             () => `[Current Health: ${this.ussSchwarzenegger.currentHull}] [Target's Health: ${this.alienFleet[0].currentHull}] [Enemies Remaining: ${this.alienFleet.length}],
-                \nDo you want to attack the ${this.changeWord()} alien ship?`, //1
+                \nDo you want to attack the ${this.changeMessages1()} alien ship?`, //1
             () => `[Current Health: ${this.ussSchwarzenegger.currentHull}] [Target's Shield: ${this.alienFleet[0].currentShield}] [Target's Health: ${this.alienFleet[0].currentHull}] 
                 \nDo you want to attack the alien mothership?`, //2
             () => `Are you sure you want to retreat? Doing so will end the game...`, //3
@@ -122,7 +112,7 @@ class GameLogic  {
             () => this.userDifficulty = 6,  //0
             () => this.userDifficulty = 12, //1
         //attack or retreat?
-            () => {this.ussSchwarzenegger.attack(this.alienFleet[0]); this.ussAttackResult()},   //2
+            () => {this.hitOrMiss(this.alienFleet[0],this.ussSchwarzenegger);this.ussSchwarzenegger.attack(this.alienFleet[0]); this.ussAttackResult()},   //2
             () => this.ussSchwarzenegger.retreat(),   //3
         //are you sure you want to retreat?
             () => this.endGame(),    //4
@@ -169,13 +159,22 @@ class GameLogic  {
             ((this.alienBoss.currentShield > 0) ? this.outcomes[19]() : this.outcomes[20]());
     }
     enemyCounterAttack () {
+        this.hitOrMiss(this.ussSchwarzenegger,this.alienFleet[0]);
         this.alienFleet[0].attack(this.ussSchwarzenegger);
         this.alienAttackResult();  
     }
     ussCounterAttack () {
+        this.hitOrMiss(this.alienFleet[0],this.ussSchwarzenegger);
         this.ussSchwarzenegger.attack(this.alienFleet[0]);
         this.ussAttackResult();
     }
+    enemySneakAttack () {
+        alert(this.alienFleet[1].alerts[4]);
+        this.hitOrMiss(this.ussSchwarzenegger,this.alienFleet[1]);
+        this.ussSchwarzenegger.currentHull === this.ussSchwarzenegger.startingHull ? 
+           this.outcomes[14]() : 
+           (this.ussSchwarzenegger.currentHull > 0 ? this.outcomes[15]() : this.outcomes[13]());
+    } 
 ////Class Creation/Removal Methods/////
     spawnAliens () {
         for (let i = 0; i < this.userDifficulty; i ++) { 
@@ -195,20 +194,18 @@ class GameLogic  {
         this.userChoice(1,"attack","retreat",2,3);
     } 
 /////Randomizer Methods/////
+    hitOrMiss (target,attacker) {
+        target.startingShield > 0 ? 
+            (Math.random() <= attacker.accuracy ? target.currentShield -= attacker.firepower : target.currentShield -= 0) :
+            (Math.random() <= attacker.accuracy ? target.currentHull -= attacker.firepower : target.currentHull -= 0);
+    }
     randomAlienProps (min, max) {
         return Math.round(Math.random() * (max - min) + min); 
     }   
     randomEnemySneakAttack () {
         (Math.random() <= .4) && (this.alienFleet.length > 1) ?  this.enemySneakAttack() : false; 
      }
-    enemySneakAttack () {
-         alert(this.alienFleet[1].alerts[4]);
-         this.alienFleet[1].hitOrMiss(this.ussSchwarzenegger);
-         this.ussSchwarzenegger.currentHull === this.ussSchwarzenegger.startingHull ? 
-            this.outcomes[14]() : 
-            (this.ussSchwarzenegger.currentHull > 0 ? this.outcomes[15]() : this.outcomes[13]());
-     } 
-     randomHealthBonus () {
+    randomHealthBonus () {
         this.alienFleet.length !== this.startingFleetSize ? (Math.random() <= .7 ? 
             (this.ussSchwarzenegger.currentHull += 1) && alert(this.ussSchwarzenegger.alerts[4]) : 
             this.ussSchwarzenegger.currentHull += 0) : false;  
@@ -227,7 +224,7 @@ class GameLogic  {
     returnAlert (messagesProperty) {
         return alert(messagesProperty);
     } 
-    changeWord () {
+    changeMessages1 () {
         return this.alienFleet.length === this.startingFleetSize ? `first` : (this.alienFleet.length > 1 ? `next` : `last`); 
     }
 /////Game Progression Methods/////
@@ -254,4 +251,4 @@ class GameLogic  {
 
 //////Start Game/////
 const game = new GameLogic; 
-setTimeout(()=>game.startGame(), 2500);
+setTimeout(()=>game.startGame(), 3000);
