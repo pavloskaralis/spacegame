@@ -201,7 +201,7 @@ class GameLogic  {
         return Math.round(Math.random() * (max - min) + min); 
     }   
     randomEnemySneakAttack () {
-        (Math.random() <= .3) && (this.alienFleet.length > 1) ?  this.enemySneakAttack() : false; 
+        (Math.random() <= .4) && (this.alienFleet.length > 1) ?  this.enemySneakAttack() : false; 
      }
     enemySneakAttack () {
          alert(this.alienFleet[1].alerts[4]);
