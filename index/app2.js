@@ -189,7 +189,6 @@ class GameLogic  {
         this.alienFleet.push(this.alienBoss);
         this.returnAlert(this.messages[9]());
         this.userChoice(2,"attack","retreat",2,3);
-
     }
     removeEnemy () {
         this.alienFleet.shift(); 
