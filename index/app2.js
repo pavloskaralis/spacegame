@@ -74,7 +74,7 @@ class Uss extends Alien {
         ]
     }
     attack (target) {
-        target.loadinShield === 6 ? alert(this.alerts[5]) : alert(this.alerts[0]);
+        target.loadinShield > 0 ? alert(this.alerts[5]) : alert(this.alerts[0]);
     }
     destroyed () {
         alert(this.alerts[3]); 
