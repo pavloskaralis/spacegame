@@ -7,13 +7,14 @@ class Alien {
         this.accuracy = acc/10;
         this.startingShield = sh;
         this.currentShield = sh;
+        this.loadinShield = sh; 
         this.index;
         this.alerts = [
             `The alien ship launches a counterattack...`,
             `It manages to dodge your attack and takes no damage.`, 
             (attacker) => `You breach its hull for ${attacker.firepower} damage, leaving ${this.currentHull} health.`,
             `You breach its hull and destroy it!`,
-            `A second alien ship sneaks in an attack...`
+            `A second alien ship joins in on the an attack...`,
         ]
     }
     hitOrMiss (target) {
@@ -22,42 +23,26 @@ class Alien {
     updateStartingHall () {
         this.startingHull = this.currentHull; 
     }
-    attack (arr, target) {
+    attack (target) {
         this.hitOrMiss(target);
         alert(this.alerts[0]);
-        target.currentHull === target.startingHull ? target.dodgeAttack(arr, this) : (target.currentHull > 0 ? target.takeDamage(arr, this) : target.destroyed(arr, this));
     }
-    dodgeAttack (arr, attacker) {
+    dodgeAttack () {
         alert(this.alerts[1]); 
-        this.attack(arr, attacker);
     }
-    takeDamage (arr, attacker) {
+    takeDamage (attacker) {
         alert(this.alerts[2](attacker)); 
         this.updateStartingHall();
-        this.attack(arr, attacker);
     }
-    destroyed (arr, target) {
+    destroyed () {
         alert(this.alerts[3]); 
-        this.singleOrMulti(arr, target);
-        target.healthBonus(arr);  
-        arr.shift(); 
-        checkForBoss();
-        attackOrRetreat(alienShipPrompt);
     }
-    singleOrMulti (arr,target) {
-       (Math.random() <= .25) && (arr.length > 1) ?  this.multiAttack(arr,target) : false; 
-    }
-    multiAttack (arr,target) {
-        alert(arr[1].alerts[4]);
-        arr[1].hitOrMiss(target);
-        target.currentHull === target.startingHull ? alert(target.alerts[1]) : (target.currentHull > 0 ? alert(target.alerts[2](arr[1])) && (target.updateStartingHall()) : target.destroyed());
-    } 
+
 }
 
 class Boss extends Alien {
     constructor (hp, fp, acc, sh) {
         super(hp, fp, acc, sh);
-        this.loadinShield = sh;
         this.alerts = [
             `The alien mothership launches a counterattack...`,
             `It manages to dodge your attack and takes no damage.`, 
@@ -70,21 +55,14 @@ class Boss extends Alien {
     updateStartingShield () {
         this.startingShield = this.currentShield; 
     }
-    takeShieldDamage (arr, attacker) {
+    takeShieldDamage (attacker) {
         alert(this.alerts[4](attacker)); 
         this.updateStartingShield();
-        this.attack(arr, attacker);
     }
     shieldDestroyed () {
         alert(this.alerts[5]); 
         this.updateStartingShield();
         this.currentShield = 0; 
-        attackOrRetreat(alienBossPrompt);
-    }
-    destroyed (arr) {
-        alert(this.alerts[3]); 
-        arr.shift(); 
-        endGame();
     }
 }
 
@@ -96,15 +74,13 @@ class Uss extends Alien {
             `You successfully dodge the attack and take no damage!`, 
             (attacker) => `Your hull is breached for ${attacker.firepower} damage, leaving ${this.currentHull} health.`,
             `Your hull is breached, destroying your ship.`,
-            `Your hull has been repaired for 1 health.`
+            `Your hull has been repaired for 1 health.`,
+            `You take aim at the alien mothership...`
         ]
     }
-    attack (arr, target) {
+    attack (target) {
         this.hitOrMiss(target);
-        alert(this.alerts[0]);
-        target.startingShield > 0 ?
-            (target.currentShield === target.startingShield ? target.dodgeAttack(arr,this) : (target.currentShield > 0 ? target.takeShieldDamage(arr,this) : target.shieldDestroyed(arr,this))) :
-            (target.currentHull === target.startingHull ? target.dodgeAttack(arr,this) : (target.currentHull > 0 ? target.takeDamage(arr,this) : target.destroyed(arr,this)));
+        target.loadinShield === 6 ? alert(this.alerts[5]) : alert(this.alerts[0]);
     }
     hitOrMiss (target) {
         target.startingShield > 0 ? 
@@ -113,86 +89,173 @@ class Uss extends Alien {
     }
     destroyed () {
         alert(this.alerts[3]); 
-        endGame();
     }
-    retreat (target) {
-        let userChoice = prompt(`Are you sure you want to retreat? Doing so will end the game...`,`yes/no`);
-        while ((userChoice !== 'yes') && (userChoice !== 'no')) {
-            userChoice = prompt(`Please type either "yes" or "no".`,`yes/no`);
-         }
-        userChoice === `yes` ? endGame() : (target.loadinShield > 0 ? attackOrRetreat(alienBossPrompt) : attackOrRetreat(alienShipPrompt));  
-    }
-    healthBonus (arr) {
-        arr.length !== startingFleetSize ? (Math.random() <= .5 ? (this.currentHull += 1) && alert(this.alerts[4]) : this.currentHull += 0) : false;  
+    retreat () {
+        game.userChoice(3,"yes","no",4,5);
     }
 }
 
-/////Prompt Functions/////
-const alienShipPrompt = () => prompt(`[Current Health: ${ussSchwarzenegger.currentHull}] [Target's Health: ${alienFleet[0].currentHull}] [Enemies Remaining: ${alienFleet.length}]
-    \nDo you want to attack the ${firstNextLast()} alien ship?`,`attack/retreat`);
-const alienBossPrompt = () => prompt(`[Current Health: ${ussSchwarzenegger.currentHull}] [Target's Shield: ${alienFleet[0].currentShield}] [Target's Health: ${alienFleet[0].currentHull}]
-    \nDo you want to attack the alien mothership?`,`attack/retreat`);
-const firstNextLast = () => {
-    return alienFleet.length === startingFleetSize ? `first` : (alienFleet.length > 1 ? `next` : `last`); 
-}
-const attackOrRetreat = (prompt) => {
-    let userChoice = prompt();
-    while ((userChoice !== `attack`) && (userChoice !== `retreat`)) {
-        userChoice = prompt(`Please type either "attack" or "retreat".`,`attack/retreat`);
+class GameLogic  {
+    constructor() {
+        this.ussSchwarzenegger = new Uss (20, 5, 7.5);
+        this.alienBoss = new Boss (6,4,8,6); 
+        this.alienFleet = []; 
+        this.userDifficulty;
+        this.startingFleetSize; 
+        this.target; 
+        this.attacker;  
+        this.messages = [
+            () => `Please select a difficulty level.`, //0
+            () => `[Current Health: ${this.ussSchwarzenegger.currentHull}] [Target's Health: ${this.alienFleet[0].currentHull}] [Enemies Remaining: ${this.alienFleet.length}],
+                \nDo you want to attack the ${this.changeWord()} alien ship?`, //1
+            () => `[Current Health: ${this.ussSchwarzenegger.currentHull}] [Target's Shield: ${this.alienFleet[0].currentShield}] [Target's Health: ${this.alienFleet[0].currentHull}] 
+                \nDo you want to attack the alien mothership?`, //2
+            () => `Are you sure you want to retreat? Doing so will end the game...`, //3
+            () => `You've destroyed the entire enemy fleet and emerge victorious!`, //4
+            () => `The enemy fleet manages to fend off your attack...for now.`, //5
+            () => `The enemy fleet emerges victorious...a valient defeat.`, //6
+            () => `Thank you for playing!`,  //7
+            () => `Do you want to play again?`, //8
+            () => `The alien mothership emerges...` //9
+        ];   
+        this.outcomes = [
+        //difficulty?
+            () => this.userDifficulty = 6,  //0
+            () => this.userDifficulty = 12, //1
+        //attack or retreat?
+            () => {this.ussSchwarzenegger.attack(this.alienFleet[0]); this.ussAttackResult()},   //2
+            () => this.ussSchwarzenegger.retreat(),   //3
+        //are you sure you want to retreat?
+            () => this.endGame(),    //4
+            () => this.alienFleet[0].loadinShield > 0 ? this.userChoice(2,"attack","retreat",2,3) : this.userChoice(1,"attack","retreat",2,3),  //5
+        //play again?
+            () => {this.alienFleet.shift(); window.location.reload(true)}, //6
+            () => {this.alienFleet.shift();this.returnAlert(this.messages[7]())}, //7
+        //alien moves
+            () => {this.alienFleet[0].dodgeAttack(); this.enemyCounterAttack()}, //8
+            () => {this.alienFleet[0].takeDamage(this.ussSchwarzenegger); this.enemyCounterAttack()}, //9
+            () => {this.alienFleet[0].destroyed(); this.randomHealthBonus(); this.checkIfBossDefeated()}, //10
+        //uss moves
+            () => {this.ussSchwarzenegger.dodgeAttack();this.randomEnemySneakAttack(); this.ussCounterAttack()},//11
+            () => {this.ussSchwarzenegger.takeDamage(this.alienFleet[0]);this.randomEnemySneakAttack(); this.ussCounterAttack()}, //12
+            () => {this.ussSchwarzenegger.destroyed(); this.endGame()}, //13
+        /////sneak attacks
+            () => alert(this.ussSchwarzenegger.alerts[1]), //14
+            () => {alert(this.ussSchwarzenegger.alerts[2](this.alienFleet[1])); this.ussSchwarzenegger.updateStartingHall()}, //15
+        /////end game /////
+            () => this.returnAlert(this.messages[4]()), //16
+            () => this.returnAlert(this.messages[5]()), //17
+            () => this.returnAlert(this.messages[6]()), //18
+        /////attack boss moves///// 
+            () => {this.alienFleet[0].takeShieldDamage(this.ussSchwarzenegger); this.enemyCounterAttack()}, //19
+            () => {this.alienFleet[0].shieldDestroyed(this.ussSchwarzenegger); this.userChoice(2,"attack","retreat",2,3);}, //20
+        ]
     }
-    userChoice === `attack` ? ussSchwarzenegger.attack(alienFleet, alienFleet[0]) : ussSchwarzenegger.retreat(alienFleet[0]);  
-}
-const win = () => alert(`You've destroyed the entire enemy fleet and emerge victorious!`);
-const draw = () => alert(`The enemy fleet manages to fend off your attack...for now.`);
-const lose = () => alert(`The enemy fleet emerges victorious...a valient defeat.`)
+///// Class Interactions /////
+    alienAttackResult () {
+        this.ussSchwarzenegger.currentHull === this.ussSchwarzenegger.startingHull ? 
+            this.outcomes[11]() : 
+            (this.ussSchwarzenegger.currentHull > 0 ? this.outcomes[12]() : this.outcomes[13]());
+    }
+    ussAttackResult () {
+        this.alienFleet[0].startingShield > 0 ?
+            this.ussAttackResultShield() : 
+        this.alienFleet[0].currentHull === this.alienFleet[0].startingHull ? 
+            this.outcomes[8]() : 
+            (this.alienFleet[0].currentHull > 0 ? this.outcomes[9]() : this.outcomes[10]());
+    }
+    ussAttackResultShield () {
+       
 
-/////Initialization Functions/////
-const startGame = () => {
-    setDifficulty();
-    alert(`Now entering interstellar space...`);
-    alert(`Enemy ships approaching!`)
-    attackOrRetreat(alienShipPrompt);
-}
-const checkForBoss = () => {
-    alienFleet.length === 0 ? spawnBoss() : false;    
-}
-const endGame = () => {
-    alienFleet.length === 0 ? win() : (ussSchwarzenegger.currentHull > 0 ? draw() : lose());
-    let userChoice = prompt(`Do you want to play again?`,`yes/no`);
-    while ((userChoice !== 'yes') && (userChoice !== 'no')) {
-        userChoice = prompt(`Please type either "yes" or "no".`,`yes/no`);
-     }
-    alienFleet.shift();
-    userChoice === `yes` ? window.location.reload(true) : alert(`Thank you for playing!`);  
-}
-const random = (min, max) => {
-    return Math.round(Math.random() * (max - min) + min); 
- }   
+        this.alienBoss.currentShield === this.alienBoss.startingShield ? 
+            this.outcomes[8]() : 
+            ((this.alienBoss.currentShield > 0) ? this.outcomes[19]() : this.outcomes[20]());
+    }
+    enemyCounterAttack () {
+        this.alienFleet[0].attack(this.ussSchwarzenegger);
+        this.alienAttackResult();  
+    }
+    ussCounterAttack () {
+        this.ussSchwarzenegger.attack(this.alienFleet[0]);
+        this.ussAttackResult();
+    }
+////Class Creation/Removal Methods/////
+    spawnAliens () {
+        for (let i = 0; i < this.userDifficulty; i ++) { 
+            let alienShip = new Alien (this.randomAlienProps(3,6), this.randomAlienProps(2,4), this.randomAlienProps(6,8), 0);
+            this.alienFleet.push(alienShip);
+        } 
+        this.startingFleetSize = this.alienFleet.length;
+    }
+    spawnBoss () {
+        this.alienFleet.push(this.alienBoss);
+        this.returnAlert(this.messages[9]());
+        this.userChoice(2,"attack","retreat",2,3);
 
-/////Class Instances/////
-let ussSchwarzenegger = new Uss (20, 5, 7.5);
-let alienBoss = new Boss (6,4,8,6);
-let alienFleet = [];
-let userDifficulty;
-let startingFleetSize;
-const setDifficulty = () => {
-    let userChoice = prompt(`Please select a difficulty level`,`novice/expert`);
-    while ((userChoice !== `novice`) && (userChoice !== `expert`)) {
-        userChoice = prompt(`Please type either "novice" or "expert".`,`novice/difficult`);
-     }
-    userChoice === `novice` ? userDifficulty = 6 : userDifficulty = 12;  
-    for (let i = 0; i < userDifficulty; i ++) { 
-        let alienShip = new Alien (random(3,6), random(2,4), random(6,8), 0);
-        alienFleet.push(alienShip);
+    }
+    removeEnemy () {
+        this.alienFleet.shift(); 
+        this.checkIfAliensDefeated();
+        this.userChoice(1,"attack","retreat",2,3);
     } 
-    startingFleetSize = alienFleet.length;
+/////Randomizer Methods/////
+    randomAlienProps (min, max) {
+        return Math.round(Math.random() * (max - min) + min); 
+    }   
+    randomEnemySneakAttack () {
+        (Math.random() <= .3) && (this.alienFleet.length > 1) ?  this.enemySneakAttack() : false; 
+     }
+    enemySneakAttack () {
+         alert(this.alienFleet[1].alerts[4]);
+         this.alienFleet[1].hitOrMiss(this.ussSchwarzenegger);
+         this.ussSchwarzenegger.currentHull === this.ussSchwarzenegger.startingHull ? 
+            this.outcomes[14]() : 
+            (this.ussSchwarzenegger.currentHull > 0 ? this.outcomes[15]() : this.outcomes[13]());
+     } 
+     randomHealthBonus () {
+        this.alienFleet.length !== this.startingFleetSize ? (Math.random() <= .7 ? 
+            (this.ussSchwarzenegger.currentHull += 1) && alert(this.ussSchwarzenegger.alerts[4]) : 
+            this.ussSchwarzenegger.currentHull += 0) : false;  
+    }
+/////Messaging Methods////
+    userChoice (messagesIndex,choice1,choice2,outcomeIndex1,outcomeIndex2) {
+        let userChoice = this.returnPrompt(this.messages[messagesIndex](),choice1,choice2);
+        while ((userChoice !== choice1) && (userChoice !== choice2)) {
+            userChoice = prompt(`Please type either ${choice1} or ${choice2}.`,`${choice1}/${choice2}`);
+        }
+        return userChoice === choice1 ? this.outcomes[outcomeIndex1]() : this.outcomes[outcomeIndex2](); 
+    }
+    returnPrompt (messagesProperty,choice1,choice2) {
+        return prompt(messagesProperty,`${choice1}/${choice2}`);
+    }  
+    returnAlert (messagesProperty) {
+        return alert(messagesProperty);
+    } 
+    changeWord () {
+        return this.alienFleet.length === this.startingFleetSize ? `first` : (this.alienFleet.length > 1 ? `next` : `last`); 
+    }
+/////Game Progression Methods/////
+    startGame () {
+        this.userChoice(0,"novice","expert",0,1);
+        this.spawnAliens();
+        alert(`Now entering interstellar space...`);
+        alert(`Enemy ships approaching!`)
+        this.userChoice(1,"attack","retreat",2,3);
+    }
+    checkIfBossDefeated () {
+        this.alienBoss.currentHull <= 0 ? this.endGame() : this.removeEnemy();
+    }
+    checkIfAliensDefeated () {
+        this.alienFleet.length === 0 ? this.spawnBoss() : false;    
+    }
+    endGame () {
+        this.alienBoss.currentHull <= 0 ? 
+            this.outcomes[16]() : 
+            (this.ussSchwarzenegger.currentHull > 0 ? this.outcomes[17]() : this.outcomes[18]());
+        this.userChoice(8,"yes","no",6,7);
+    }   
 }
 
-const spawnBoss = () => {
-    alienFleet.push(alienBoss);
-    alert(`The alien mothership emerges...`); 
-    attackOrRetreat(alienBossPrompt);  
-}
-
-/////Initialize/////
-setTimeout(startGame, 3000);
+//////Start Game/////
+const game = new GameLogic; 
+setTimeout(()=>game.startGame(), 2500);
