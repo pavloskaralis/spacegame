@@ -131,11 +131,11 @@ class GameLogic  {
         /////sneak attacks
             () => alert(this.ussSchwarzenegger.alerts[1]), //14
             () => {alert(this.ussSchwarzenegger.alerts[2](this.alienFleet[1])); this.ussSchwarzenegger.updateStartingHall()}, //15
-        /////end game /////
+        //end game
             () => this.returnAlert(this.messages[4]()), //16
             () => this.returnAlert(this.messages[5]()), //17
             () => this.returnAlert(this.messages[6]()), //18
-        /////attack boss moves///// 
+        //boss moves
             () => {this.alienFleet[0].takeShieldDamage(this.ussSchwarzenegger); this.enemyCounterAttack()}, //19
             () => {this.alienFleet[0].shieldDestroyed(this.ussSchwarzenegger); this.userChoice(2,"attack","retreat",2,3);}, //20
         ]
